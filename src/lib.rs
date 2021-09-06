@@ -34,3 +34,40 @@ pub extern "C" fn normalize_pair(symbol: *const c_char, exchange: *const c_char)
         }
     }
 }
+
+/// Deallocate a string.
+#[no_mangle]
+pub extern "C" fn deallocate_string(pointer: *const c_char) {
+    unsafe {
+        if pointer.is_null() {
+            return;
+        }
+        CString::from_raw(pointer as *mut c_char)
+    };
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{deallocate_string, normalize_pair};
+    use std::ffi::{CStr, CString};
+
+    #[test]
+    fn test_normalize_pair() {
+        let (string_ptr, string_str) = {
+            let symbol = CString::new("BTCUSDT").unwrap();
+            let exchange = CString::new("binance").unwrap();
+
+            let string_ptr = normalize_pair(symbol.as_ptr(), exchange.as_ptr());
+            let string_c_str = unsafe {
+                debug_assert!(!string_ptr.is_null());
+                CStr::from_ptr(string_ptr)
+            };
+
+            (string_ptr, string_c_str.to_str().unwrap())
+        };
+
+        assert_eq!(string_str, "BTC/USDT");
+
+        deallocate_string(string_ptr);
+    }
+}

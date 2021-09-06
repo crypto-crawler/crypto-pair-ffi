@@ -17,4 +17,9 @@
  */
 const char *normalize_pair(const char *symbol, const char *exchange);
 
+/**
+ * Deallocate a string.
+ */
+void deallocate_string(const char *pointer);
+
 #endif /* CRYPTO_PAIR_H_ */
