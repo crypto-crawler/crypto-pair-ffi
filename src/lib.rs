@@ -5,7 +5,9 @@ use std::{
     os::raw::c_char,
 };
 
-/// Normalize a cryptocurrency trading pair.
+use crypto_market_type::MarketType;
+
+/// Normalize a cryptocurrency trading symbol.
 #[no_mangle]
 pub extern "C" fn normalize_pair(symbol: *const c_char, exchange: *const c_char) -> *const c_char {
     let symbol = unsafe {
@@ -31,6 +33,41 @@ pub extern "C" fn normalize_pair(symbol: *const c_char, exchange: *const c_char)
         Err(err) => {
             eprintln!("{:?}", err);
             std::ptr::null()
+        }
+    }
+}
+
+/// Infer out market type from the symbol.
+///
+/// The `is_spot` parameter is not needed in most cases, but at some exchanges
+///  (including binance, gate and mxc) a symbol might exist in both spot and
+/// contract markets, for example:
+/// * At binance `BTCUSDT` exists in both spot and linear_swap markets
+/// * At gate `BTC_USDT` exists in both spot and linear_swap markets,
+/// `BTC_USD` exists in both spot and inverse_swap markets
+#[no_mangle]
+pub extern "C" fn get_market_type(
+    symbol: *const c_char,
+    exchange: *const c_char,
+    is_spot: bool,
+) -> MarketType {
+    let symbol = unsafe {
+        debug_assert!(!symbol.is_null());
+        CStr::from_ptr(symbol).to_str().unwrap()
+    };
+
+    let exchange = unsafe {
+        debug_assert!(!exchange.is_null());
+        CStr::from_ptr(exchange).to_str().unwrap()
+    };
+
+    let result =
+        std::panic::catch_unwind(|| crypto_pair::get_market_type(symbol, exchange, Some(is_spot)));
+    match result {
+        Ok(market_type) => market_type,
+        Err(err) => {
+            eprintln!("{:?}", err);
+            MarketType::Unknown
         }
     }
 }

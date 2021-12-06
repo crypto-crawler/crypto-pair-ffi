@@ -1,6 +1,6 @@
 [package]
 name = "crypto-pair-ffi"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["soulmachine <soulmachine@gmail.com>"]
 edition = "2018"
 
@@ -8,7 +8,8 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-crypto-pair = "2.0.5"
+crypto-market-type = "1.0.5"
+crypto-pair = "2.1.0"
 
 [build-dependencies]
 cbindgen = "0.16.0"
