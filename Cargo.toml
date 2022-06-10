@@ -8,11 +8,11 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-crypto-market-type = "1.0.5"
-crypto-pair = "2.1.0"
+crypto-market-type = "1.1.0"
+crypto-pair = "2.2.7"
 
 [build-dependencies]
-cbindgen = "0.16.0"
+cbindgen = "0.24.3"
 
 [profile.release]
 lto = true
