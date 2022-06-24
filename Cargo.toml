@@ -9,7 +9,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 crypto-market-type = "1.1.0"
-crypto-pair = "2.2.9"
+crypto-pair = "2.2.10"
 
 [build-dependencies]
 cbindgen = "0.24.3"
